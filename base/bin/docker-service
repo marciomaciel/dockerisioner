@@ -1,0 +1,59 @@
+#!/bin/bash
+set -o pipefail
+set -Eeux
+if [[ "$#" -le 1 ]]; then
+    echo "Usage: $0 <command> <service>"
+    exit 1
+fi
+SERVICE_COMMAND=$1
+shift
+for SERVICE in "$@"; do
+    RUN_FILE="/opt/docker/bin/service.d/${SERVICE}.sh"
+    SERVICE_FILE="/opt/docker/etc/supervisor.d/${SERVICE}.conf"
+    PROVISION_FILE="/opt/docker/provision/service.d/${SERVICE}.sh"
+    case "$SERVICE_COMMAND" in
+        enable)
+            if [[ -f "$PROVISION_FILE" ]]; then
+                echo "Running provisioning for ${SERVICE}, please wait..."
+                . "$PROVISION_FILE"
+                rm -f -- "$PROVISION_FILE"
+            fi
+            if [[ -f "$SERVICE_FILE" ]]; then
+                sed -i 's/autostart =.*/autostart = true/g' "$SERVICE_FILE"
+            else
+                echo "[ERROR] Service '${SERVICE}' not found (tried ${SERVICE_FILE})"
+                exit 1
+            fi
+            ;;
+        disable)
+            if [[ -f "$SERVICE_FILE" ]]; then
+                sed -i 's/autostart =.*/autostart = false/g' "$SERVICE_FILE"
+            else
+                echo "[ERROR] Service '${SERVICE}' not found (tried ${SERVICE_FILE})"
+                exit 1
+            fi
+            ;;
+        install)
+             if [[ -f "$PROVISION_FILE" ]]; then
+                echo "Running provisioning for ${SERVICE}, please wait..."
+                . "$PROVISION_FILE"
+                rm -f -- "$PROVISION_FILE"
+            fi
+            ;;
+        run)
+            if [[ -f "$RUN_FILE" ]]; then
+                exec "$RUN_FILE"
+            else
+                echo "[ERROR] Service '${SERVICE}' not found (tried ${RUN_FILE})"
+                exit 1
+            fi
+            ;;
+        stop|start|restart|status|pid|check)
+            service "${SERVICE}" "$SERVICE_COMMAND"
+            ;;
+         *)
+            echo "[ERROR] $SERVICE_COMMAND is not a valid command"
+            exit 1
+            ;;
+    esac
+done

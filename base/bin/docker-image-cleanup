@@ -1,0 +1,8 @@
+#!/bin/bash
+set -Eeux
+rm -f /tmp/.apt-update
+apt-get autoremove -y -f
+apt-get clean -y
+rm -rf /var/lib/apt/lists/*
+find /tmp/ /var/log/ -mindepth 1 -delete
+rm -rf /root/.cache

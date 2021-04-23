@@ -1,0 +1,51 @@
+#!/bin/bash
+set -o pipefail
+set -Eeux
+if [ "$(/usr/bin/whoami)" != "root" ]; then
+    echo "[ERROR] Must be run as root"
+    exit 1
+fi
+function serviceHelp() {
+    echo "Usage: $(basename "$0") <servicename> <stop|start|restart|pid|status|check>"
+}
+function getServicePid() {
+    local serviceName="$1"
+    local servicePid=$(supervisorctl pid "${serviceName}:${serviceName}d")
+    if [[ -z "$servicePid" ]] || [[ "$servicePid" == "0" ]]; then
+        echo "not running"
+        exit 1
+    fi
+    echo $servicePid
+}
+if [ "$#" -lt 2 ]; then
+    echo "[ERROR] Missing parameters"
+    serviceHelp
+    exit 1
+fi
+SERVICENAME="$1"
+ACTION="$2"
+case "$ACTION" in
+stop | start | restart | status)
+    exec supervisorctl "$ACTION" "${SERVICENAME}:${SERVICENAME}d"
+    ;;
+pid)
+    echo $(getServicePid "${SERVICENAME}")
+    ;;
+check)
+    FIRST_PID=$(getServicePid "${SERVICENAME}")
+    sleep 5
+    SECOND_PID=$(getServicePid "${SERVICENAME}")
+    if [[ "$FIRST_PID" == "$SECOND_PID" ]]; then
+        echo "ok"
+        exit 0
+    else
+        echo "not running"
+        exit 1
+    fi
+    ;;
+*)
+    echo "[ERROR] Invalid action"
+    serviceHelp
+    exit 1
+    ;;
+esac

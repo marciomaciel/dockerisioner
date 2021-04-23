@@ -1,0 +1,5 @@
+#!/bin/bash
+set -Eeux
+apt-install software-properties-common
+add-apt-repository $@
+apt-get purge -y -f software-properties-common

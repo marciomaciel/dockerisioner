@@ -1,0 +1,12 @@
+#!/bin/bash
+set -o pipefail
+set -Eeux
+export DEBIAN_FRONTEND=noninteractive
+if [[ -f "/tmp/.apt-update" ]]; then
+    RUNLEVEL=1 apt-get dist-upgrade -yf
+else
+    apt-get  update
+    RUNLEVEL=1 apt-get -dist-upgrade --autoremove -yf
+    rm -rf /var/lib/apt/lists/*
+    apt-get clean -y
+fi

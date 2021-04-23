@@ -1,0 +1,4 @@
+#!/bin/bash
+set -o pipefail
+set -Eeux
+/usr/local/bin/apt-install locales-all

@@ -1,0 +1,25 @@
+#!/bin/bash
+set -Eeux
+if [ -d /opt/docker/bin/ ]; then
+    find /opt/docker/bin/ -type f -iname '*.sh' -print0 | xargs --no-run-if-empty -0 chmod +x
+fi
+globExists() {
+    test -e "$1" -o -L "$1"
+}
+execScriptsInPath() {
+    SCRIPT_DIRECTORY="$1"
+    if [ -d "$SCRIPT_DIRECTORY" ]; then
+        if globExists "${SCRIPT_DIRECTORY}/"*.sh; then
+            echo ":: Running scripts in ${SCRIPT_DIRECTORY}"
+            for FILE in "${SCRIPT_DIRECTORY}/"*.sh; do
+                echo "-> Executing ${FILE}"
+                . "$FILE"
+                rm -f -- "$FILE"
+            done
+        fi
+    fi
+}
+execScriptsInPath "/opt/docker/provision/bootstrap.d"
+execScriptsInPath "/opt/docker/provision/build.d"
+execScriptsInPath "/bootstrap.d"
+execScriptsInPath "/build.d"
