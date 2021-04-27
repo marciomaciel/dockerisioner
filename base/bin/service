@@ -1,6 +1,6 @@
 #!/bin/bash
-set -o pipefail
-set -Eeux
+# replacement script for system service bin to manage docker services
+set -o pipefail -Ee
 if [ "$(/usr/bin/whoami)" != "root" ]; then
     echo "[ERROR] Must be run as root"
     exit 1
@@ -10,12 +10,13 @@ function serviceHelp() {
 }
 function getServicePid() {
     local serviceName="$1"
-    local servicePid=$(supervisorctl pid "${serviceName}:${serviceName}d")
+    local servicePid
+    servicePid=$(supervisorctl pid "${serviceName}:${serviceName}d")
     if [[ -z "$servicePid" ]] || [[ "$servicePid" == "0" ]]; then
         echo "not running"
         exit 1
     fi
-    echo $servicePid
+    echo "$servicePid"
 }
 if [ "$#" -lt 2 ]; then
     echo "[ERROR] Missing parameters"
@@ -29,7 +30,7 @@ stop | start | restart | status)
     exec supervisorctl "$ACTION" "${SERVICENAME}:${SERVICENAME}d"
     ;;
 pid)
-    echo $(getServicePid "${SERVICENAME}")
+    echo getServicePid "${SERVICENAME}"
     ;;
 check)
     FIRST_PID=$(getServicePid "${SERVICENAME}")

@@ -1,4 +1,6 @@
 #!/bin/bash
+#cleanup cron default configs
+set -o pipefail -Ee
 rm -f -- \
     /etc/cron.daily/logrotate \
     /etc/cron.daily/apt-compat \

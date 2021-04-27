@@ -1,5 +1,12 @@
 #!/bin/bash
+# exec cron service
+set -o pipefail -Ee
 if [[ -z "$SERVICE_CRON_OPTS" ]]; then SERVICE_CRON_OPTS=""; fi
-source /opt/docker/bin/config.sh
-includeScriptDir "/opt/docker/bin/service.d/cron.d"
+if [[ -d "/opt/docker/bin/service.d/cron.d" ]]; then
+    for FILE in "/opt/docker/bin/service.d/syslog-ng.d"/*.sh; do
+        echo "-> Executing ${FILE}"
+        # shellcheck source=$FILE
+        . "$FILE"
+    done
+fi
 exec /usr/sbin/cron -f $SERVICE_CRON_OPTS

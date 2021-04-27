@@ -1,2 +1,4 @@
 #!/bin/bash
-exec tail -f /dev/null
+# no operation entrypoint
+set -o pipefail -Ee
+tail -f /dev/null

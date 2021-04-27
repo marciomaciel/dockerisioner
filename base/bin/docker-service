@@ -1,6 +1,6 @@
 #!/bin/bash
-set -o pipefail
-set -Eeux
+# service provisioning
+set -o pipefail -Ee
 if [[ "$#" -le 1 ]]; then
     echo "Usage: $0 <command> <service>"
     exit 1
@@ -8,44 +8,37 @@ fi
 SERVICE_COMMAND=$1
 shift
 for SERVICE in "$@"; do
-    RUN_FILE="/opt/docker/bin/service.d/${SERVICE}.sh"
-    SERVICE_FILE="/opt/docker/etc/supervisor.d/${SERVICE}.conf"
-    PROVISION_FILE="/opt/docker/provision/service.d/${SERVICE}.sh"
+    SERVICE_CONFIG="/opt/docker/etc/supervisor.d/${SERVICE}.conf"
+    SERVICE_PROVISION="/opt/docker/provision/service/${SERVICE}.sh"
     case "$SERVICE_COMMAND" in
         enable)
-            if [[ -f "$PROVISION_FILE" ]]; then
+            if [[ -f "$SERVICE_PROVISION" ]]; then
                 echo "Running provisioning for ${SERVICE}, please wait..."
-                . "$PROVISION_FILE"
-                rm -f -- "$PROVISION_FILE"
+                # shellcheck source=/opt/docker/provision/service/*.sh
+                . "$SERVICE_PROVISION"
+                rm -f -- "$SERVICE_PROVISION"
             fi
-            if [[ -f "$SERVICE_FILE" ]]; then
-                sed -i 's/autostart =.*/autostart = true/g' "$SERVICE_FILE"
+            if [[ -f "$SERVICE_CONFIG" ]]; then
+                sed -i '/autostart =.*/c\autostart = true' "$SERVICE_CONFIG"
             else
-                echo "[ERROR] Service '${SERVICE}' not found (tried ${SERVICE_FILE})"
+                echo "[ERROR] Service '${SERVICE}' not found (tried ${SERVICE_CONFIG})"
                 exit 1
             fi
             ;;
         disable)
-            if [[ -f "$SERVICE_FILE" ]]; then
-                sed -i 's/autostart =.*/autostart = false/g' "$SERVICE_FILE"
+            if [[ -f "$SERVICE_CONFIG" ]]; then
+                sed -i '/autostart =.*/c\autostart = false' "$SERVICE_CONFIG"
             else
-                echo "[ERROR] Service '${SERVICE}' not found (tried ${SERVICE_FILE})"
+                echo "[ERROR] Service '${SERVICE}' not found (tried ${SERVICE_CONFIG})"
                 exit 1
             fi
             ;;
         install)
-             if [[ -f "$PROVISION_FILE" ]]; then
+             if [[ -f "$SERVICE_PROVISION" ]]; then
                 echo "Running provisioning for ${SERVICE}, please wait..."
-                . "$PROVISION_FILE"
-                rm -f -- "$PROVISION_FILE"
-            fi
-            ;;
-        run)
-            if [[ -f "$RUN_FILE" ]]; then
-                exec "$RUN_FILE"
-            else
-                echo "[ERROR] Service '${SERVICE}' not found (tried ${RUN_FILE})"
-                exit 1
+                # shellcheck source=/opt/docker/provision/service/*.sh
+                . "$SERVICE_PROVISION"
+                rm -f -- "$SERVICE_PROVISION"
             fi
             ;;
         stop|start|restart|status|pid|check)

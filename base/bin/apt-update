@@ -1,5 +1,5 @@
 #!/bin/bash
-set -o pipefail
-set -Eeux
+# apt update
+set -o pipefail -Ee
 apt-get update
 touch /tmp/.apt-update
