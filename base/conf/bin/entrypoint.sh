@@ -1,17 +1,19 @@
 #!/bin/bash
-set -o pipefail -Ee
-trap 'echo sigterm ; exit' SIGTERM
+set -o pipefail
+set -Ee
 TASK=$1
 runScripts() {
     SCRIPT_DIRECTORY="$1"
     if [ -d "$SCRIPT_DIRECTORY" ]; then
+        echo ":: Running scripts in $SCRIPT_DIRECTORY"
         for FILE in "$SCRIPT_DIRECTORY/"*.sh; do
             if test -e "$FILE" -o -L "$FILE"; then
+                echo "-> Executing $FILE"
                 # shellcheck source=$FILE
                 . "$FILE"
                 rm -f -- "$FILE"
             else
-                echo '[ERROR] Entrypoint bootstrap file $FILE is not valid'
+                echo "[ERROR] Entrypoint bootstrap file $FILE is not valid"
                 exit 1
             fi
         done
@@ -32,9 +34,9 @@ runEntrypoint() {
 }
 if [[ "$UID" -eq 0 ]]; then
     if [ "$TASK" == "supervisord" ] || [ "$TASK" == "noop" ]; then
-        runScripts "/opt/docker/bin/entrypoint.d/bootstrap"
+        runScripts "/opt/docker/provision/entrypoint"
     else
-        runScripts "/opt/docker/bin/entrypoint.d/bootstrap" >/dev/null
+        runScripts "/opt/docker/provision/entrypoint" >/dev/null
     fi
 fi
 runEntrypoint "$@"

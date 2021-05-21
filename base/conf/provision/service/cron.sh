@@ -1,4 +1,4 @@
 #!/bin/bash
 # install cron
-set -o pipefail -Ee
+set -Ee
 apt-install cron

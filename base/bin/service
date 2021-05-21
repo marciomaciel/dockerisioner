@@ -1,6 +1,7 @@
 #!/bin/bash
 # replacement script for system service bin to manage docker services
-set -o pipefail -Ee
+set -o pipefail
+set -Ee
 if [ "$(/usr/bin/whoami)" != "root" ]; then
     echo "[ERROR] Must be run as root"
     exit 1

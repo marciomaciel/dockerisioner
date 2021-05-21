@@ -4,7 +4,6 @@ LABEL maintainer=dockerisioner@marciomaciel.com.br \
 ENV TERM="xterm-256color" \
     LANG="C.UTF-8" \
     LC_ALL="C.UTF-8" \
-    DOCKER_CONF_HOME=/opt/docker/ \
     LOG_STDOUT="" \
     LOG_STDERR=""
 # utils tools
@@ -13,7 +12,6 @@ COPY /bin/ /usr/local/bin/
 COPY conf/ /opt/docker/
 RUN set -Ee; \
     chmod +x /usr/local/bin; \
-    chmod +x /opt/docker/bin/*; \
     sed -ri "s/(deb.*\/debian buster main)/\1 contrib non-free /" -- /etc/apt/sources.list; \
     apt-update; \
     apt-upgrade; \

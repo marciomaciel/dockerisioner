@@ -1,6 +1,7 @@
 #!/bin/bash
 # Add apt sources entries
-set -o pipefail -Ee
+set -o pipefail
+set -Ee
 apt-install software-properties-common
 add-apt-repository "$@"
 apt-get purge -y -f software-properties-common

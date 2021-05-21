@@ -1,6 +1,7 @@
 #!/bin/bash
 # service provisioning
-set -o pipefail -Ee
+set -o pipefail
+set -Ee
 if [[ "$#" -le 1 ]]; then
     echo "Usage: $0 <command> <service>"
     exit 1

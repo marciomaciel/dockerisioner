@@ -1,5 +1,5 @@
 #!/bin/bash
-set -o pipefail -Ee
+set -Ee
 apt-install syslog-ng syslog-ng-core
 SYSLOG_NG_VERSION=$(syslog-ng --version | grep -E -e '^Installer-Version:[ ]+[0-9]+\.[0-9]+' | head -n 1 | awk '{print $2}' | cut -f 1,2 -d .)
 if [[ -f /etc/default/syslog-ng ]]; then

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -o pipefail -Ee
+set -Ee
 wget -O "/sbin/gosu" "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64"
 wget -O "/tmp/gosu.asc" "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64.asc"
 GNUPGHOME="$(mktemp -d)"

@@ -1,7 +1,9 @@
 #!/bin/bash
-docker rm -f base
+set -Euex
+docker rm -f magento-test
 docker build -t dockerisioner/base:latest base/
-docker run -d --name base dockerisioner/base:latest
-sleep 5
-docker logs base
+docker build -t dockerisioner/base-app:latest base-app/
+docker build -t magento-test app-test/
+docker run -d --name magento-test magento-test
+docker logs -f magento-test
 

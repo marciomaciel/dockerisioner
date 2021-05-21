@@ -1,6 +1,6 @@
 #!/bin/bash
 # prepare entrypoint
-set -o pipefail -Ee
+set -Ee
 ln -sf /opt/docker/bin/entrypoint.sh /entrypoint
 ln -sf /opt/docker/bin/entrypoint.d /entrypoint.d
 mkdir -p /entrypoint.d

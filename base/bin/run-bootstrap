@@ -1,16 +1,18 @@
 #!/bin/bash
 # run image bootstrap and build scripts
-set -o pipefail -Ee
+set -o pipefail
+set -Ee
 run() {
-    set -o pipefail -Ee
     SCRIPT_DIRECTORY=$1
     if [ -d "$SCRIPT_DIRECTORY" ]; then
         echo ":: Running scripts in $SCRIPT_DIRECTORY"
         for FILE in "$SCRIPT_DIRECTORY/"*.sh; do
-            echo "-> Executing $FILE"
-            # shellcheck source=$FILE
-            . "$FILE"
-            rm -f -- "$FILE"
+            if test -e "$FILE" -o -L "$FILE"; then
+                echo "-> Executing $FILE"
+                # shellcheck source=$FILE
+                . "$FILE"
+                rm -f -- "$FILE"
+            fi
         done
     else
         echo "[ERROR] Path not found in $SCRIPT_DIRECTORY"

@@ -5,7 +5,7 @@ LABEL maintainer=marcio.maciel@evino.com.br \
 COPY --from=php-fpm / /
 ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
 COPY conf/ /opt/docker/
-RUN set -Eeux; \
+RUN set -Eeu; \
     apt-update; \
     apt-upgrade; \
     docker-service enable syslog; \

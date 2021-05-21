@@ -1,6 +1,7 @@
 #!/bin/bash
 # apt-get install with auto update if needed
-set -o pipefail -Ee
+set -o pipefail
+set -Ee
 export DEBIAN_FRONTEND=noninteractive
 if [[ -f "/tmp/.apt-update" ]]; then
     RUNLEVEL=1 apt-get install -yf --no-install-recommends "$@"

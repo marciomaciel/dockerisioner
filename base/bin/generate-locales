@@ -1,4 +1,5 @@
 #!/bin/bash
 # install and generate locale config
-set -o pipefail -Ee
+set -o pipefail
+set -Ee
 /usr/local/bin/apt-install locales-all

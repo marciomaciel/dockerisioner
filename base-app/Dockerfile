@@ -1,13 +1,13 @@
-FROM evinobr/base:latest
-LABEL maintainer=marcio.maciel@evino.com.br \
-      vendor=evino.com.br
+FROM dockerisioner/base:latest
+LABEL maintainer=dockerisioner@marciomaciel.com.br \
+      vendor=marciomaciel.com.br
 ENV APPLICATION_USER=application \
     APPLICATION_GROUP=application \
     APPLICATION_PATH=/app \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
 COPY conf/ /opt/docker/
-RUN set -Eeu; \
+RUN set -Ee; \
     apt-install \
         zip \
         unzip \
@@ -19,5 +19,5 @@ RUN set -Eeu; \
         git \
         patch; \
     /usr/local/bin/generate-locales; \
-    docker-run-bootstrap; \
-    docker-image-cleanup
+    run-bootstrap; \
+    docker-image-cleaner

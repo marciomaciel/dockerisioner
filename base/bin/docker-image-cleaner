@@ -1,6 +1,7 @@
 #!/bin/bash
 # docker image cleanup
-set -o pipefail -Ee
+set -o pipefail
+set -Ee
 rm -f /tmp/.apt-update
 apt-get autoremove -y -f
 apt-get clean -y

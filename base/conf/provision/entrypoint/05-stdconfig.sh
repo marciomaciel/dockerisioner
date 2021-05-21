@@ -1,6 +1,7 @@
 #!/bin/bash
 # configure stderr and stdout files
-set -o pipefail -Ee
+set -o pipefail
+set -Ee
 if [[ -n "$LOG_STDOUT" ]]; then
     echo "Log stdout redirected to $LOG_STDOUT"
 else

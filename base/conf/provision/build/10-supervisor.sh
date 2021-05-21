@@ -1,5 +1,5 @@
 #!/bin/bash
-set -o pipefail -Ee
+set -Ee
 apt-install supervisor
 rm -rf /usr/sbin/service
 rm -rf -- /etc/supervisor*

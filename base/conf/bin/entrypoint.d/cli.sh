@@ -1,6 +1,7 @@
 #!/bin/bash
 # script execution entrypoint
-set -o pipefail -Ee
+set -o pipefail
+set -Ee
 if [ -n "$CLI_SCRIPT" ]; then
     if [ -n "$APPLICATION_USER" ]; then
         shift
