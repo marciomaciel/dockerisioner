@@ -31,5 +31,9 @@ RUN set -Ee; \
     run-bootstrap; \
     # cleanup image before finish setup
     docker-image-cleaner;
+
+# Override stop signal to stop process gracefully
+STOPSIGNAL SIGQUIT
+
 ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]

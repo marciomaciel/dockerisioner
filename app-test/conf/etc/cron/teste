@@ -1,0 +1,1 @@
+* * * * * root su -c "/opt/docker/test.sh" $APPLICATION_USER > /docker.stdout 2>/docker.stderr
