@@ -1,5 +1,10 @@
 #!/bin/bash
 set -o pipefail -Ee
+go-replace --mode=line --regex \
+    -s '^[\s;]*user[\s]*=' -r "user = $APPLICATION_USER" \
+    -s '^[\s;]*group[\s]*=' -r "group = $APPLICATION_GROUP" \
+    --path=/opt/docker/etc/php/fpm/ \
+    --path-pattern='*.conf'
 echo '' >> /opt/docker/etc/php/fpm/php-fpm.conf
 echo '; container env settings' >> /opt/docker/etc/php/fpm/php-fpm.conf
 echo '[global]' >> /opt/docker/etc/php/fpm/php-fpm.conf
