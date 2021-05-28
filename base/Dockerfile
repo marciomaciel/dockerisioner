@@ -7,10 +7,10 @@ ENV TERM="xterm-256color" \
     LOG_STDOUT="" \
     LOG_STDERR=""
 # utils tools
-COPY /bin/ /usr/local/bin/
+COPY bin/ /usr/local/bin/
 # configs and provisioning scripts
-COPY conf/ /opt/docker/
-RUN set -Ee; \
+COPY .docker/ /opt/docker/
+RUN set -Eue; \
     chmod +x /usr/local/bin; \
     sed -ri "s/(deb.*\/debian buster main)/\1 contrib non-free /" -- /etc/apt/sources.list; \
     apt-update; \
@@ -30,7 +30,7 @@ RUN set -Ee; \
     # basic image provisioning
     run-bootstrap; \
     # cleanup image before finish setup
-    docker-image-cleaner;
+    docker-image-cleaner
 
 # Override stop signal to stop process gracefully
 STOPSIGNAL SIGQUIT

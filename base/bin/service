@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # replacement script for system service bin to manage docker services
 set -o pipefail
 set -Ee

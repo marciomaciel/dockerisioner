@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # service provisioning
 set -o pipefail
 set -Ee

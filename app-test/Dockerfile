@@ -1,14 +1,16 @@
-FROM php:7.4-fpm-buster
+FROM base
+ENV APPLICATION_USER=magento \
+    APPLICATION_GROUP=magento \
+    APPLICATION_PATH=/app \
+    APPLICATION_UID=1000 \
+    APPLICATION_GID=1000 \
+    WEB_DOCUMENT_ROOT=/app \
+    WEB_DOCUMENT_INDEX=index.php \
+    WEB_ALIAS_DOMAIN=magento.localhost
+COPY .docker/ /opt/docker/
 
-#FROM dockerisioner/base-app:latest
-#ENV APPLICATION_USER=magento \
-#    APPLICATION_GROUP=magento \
-#    APPLICATION_PATH=/var/www/html \
-#    APPLICATION_UID=1001 \
-#    APPLICATION_GID=1001
-#COPY conf/ /opt/docker/
-#COPY test.sh /opt/docker
-#RUN set -Ee; \
-#    chmod +x /opt/docker/test.sh; \
-#    docker-service enable cron; \
-#    docker-service enable syslog;
+RUN set -Eue; \
+    docker-service enable cron; \
+    docker-service enable syslog; \
+    run-bootstrap; \
+    docker-image-cleaner

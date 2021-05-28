@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # install and generate locale config
 set -o pipefail
 set -Ee

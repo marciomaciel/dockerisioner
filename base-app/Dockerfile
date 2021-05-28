@@ -1,4 +1,4 @@
-FROM dockerisioner/base:latest
+FROM dockerisioner/base:debian-buster
 LABEL maintainer=dockerisioner@marciomaciel.com.br \
       vendor=marciomaciel.com.br
 ENV APPLICATION_USER=application \
@@ -6,8 +6,9 @@ ENV APPLICATION_USER=application \
     APPLICATION_PATH=/app \
     APPLICATION_UID=1000 \
     APPLICATION_GID=1000
-COPY conf/ /opt/docker/
-RUN set -Ee; \
+COPY .docker/ /opt/docker/
+RUN set -Eue; \
+    apt-update; \
     apt-install \
         zip \
         unzip \
