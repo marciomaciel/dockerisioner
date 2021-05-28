@@ -16,8 +16,6 @@ ENV PHP_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
 COPY --from=base-app /opt/docker /opt/docker
 COPY --from=base-app /usr/local/bin/ /usr/local/bin/
 COPY .docker/ /opt/docker/
-ADD https://github.com/unicode-org/icu/releases/download/release-66-1/icu4c-66_1-src.tgz /tmp/icu.tgz
-ADD https://dev.mysql.com/get/mysql-apt-config_0.8.16-1_all.deb /tmp/mysql-apt-config.deb
 RUN set -Eue; \
     chmod +x /usr/local/bin; \
     sed -ri "s/(deb.*\/debian buster main)/\1 contrib non-free /" -- /etc/apt/sources.list; \
@@ -30,6 +28,9 @@ RUN set -Eue; \
         locales \
         procps \
         gnupg \
+        lsb-release \
+        gpg \
+        gpg-agent \
         wget \
         curl \
         vim \
@@ -44,9 +45,13 @@ RUN set -Eue; \
         rsync \
         git \
         patch; \
+    MYSQL_TEMP=$(mktemp); wget -O $MYSQL_TEMP https://dev.mysql.com/get/mysql-apt-config_0.8.16-1_all.deb; \
+    DEBIAN_FRONTEND=noninteractive dpkg -i $MYSQL_TEMP; \
+    rm -f $MYSQL_TEMP; \
     /usr/local/bin/generate-locales; \
-    dpkg -i /tmp/mysql-apt-config.deb; \
+    apt-update; \
     apt-install \
+        mysql-client \
         jpegoptim \
         libjpeg-turbo-progs \
         pngcrush \
@@ -76,7 +81,9 @@ RUN set -Eue; \
         libpq-dev \
         libzip-dev \
         librabbitmq-dev; \
-    tar -zxf /tmp/icu.tgz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu*; \
+    # Install new version of ICU
+    curl -sS -o /tmp/icu.tar.gz -L https://github.com/unicode-org/icu/releases/download/release-69-1/icu4c-69_1-src.tgz; \
+    tar -zxf /tmp/icu.tar.gz -C /tmp && cd /tmp/icu/source && ./configure --prefix=/usr/local && make && make install && cd / && rm -rf /tmp/icu*; \
     PKG_CONFIG_PATH=/usr/local docker-php-ext-configure intl; \
     docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp; \
     docker-php-ext-install \
@@ -100,11 +107,12 @@ RUN set -Eue; \
         zip \
         gd \
         gettext \
-        opcache \
+        opcache;
+RUN set -Eeu; \
     pecl install apcu; \
     pecl install redis; \
     pecl install amqp; \
-    docker-php-ext-enable apcu redis amqp; \
+    #docker-php-ext-enable apcu redis amqp; \
     apt-get purge -y -f --force-yes \
         libbz2-dev \
         libicu-dev \
