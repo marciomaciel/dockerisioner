@@ -26,6 +26,7 @@ RUN set -Eue; \
         curl \
         vim \
         net-tools \
+        gettext-base \
         tzdata; \
     # basic image provisioning
     run-bootstrap; \

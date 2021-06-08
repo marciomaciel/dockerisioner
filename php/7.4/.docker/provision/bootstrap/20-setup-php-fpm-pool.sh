@@ -16,7 +16,8 @@ go-replace --mode=lineinfile --regex \
     -s '^[\s;]*php_admin_value\[error_log\][\s]*=' -r 'php_admin_value[error_log] = /docker.stderr' \
     -s '^[\s;]*php_admin_value\[log_errors\][\s]*=' -r 'php_admin_value[log_errors] = on' \
     -s '^[\s;]*listen.allowed_clients[\s]*=' -r ";listen.allowed_clients" \
-    -- /opt/docker/etc/php/fpm/pool.d/application.conf
+    --path=/opt/docker/etc/php/fpm/pool.d/ \
+        --path-pattern='*.conf'
 go-replace --mode=line --regex \
     -s '^[\s;]*user[\s]*=' -r "user = $APPLICATION_USER" \
     -s '^[\s;]*group[\s]*=' -r "group = $APPLICATION_GROUP" \

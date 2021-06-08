@@ -109,11 +109,9 @@ RUN set -Eue; \
         gettext \
         opcache;
 RUN set -Eeu; \
-    pecl install apcu; \
-    pecl install redis; \
-    pecl install amqp; \
-    #docker-php-ext-enable apcu redis amqp; \
-    apt-get purge -y -f --force-yes \
+    pecl install apcu redis amqp xdebug-; \
+    docker-php-ext-enable apcu redis amqp; \
+    apt-get purge -y -f \
         libbz2-dev \
         libicu-dev \
         libmcrypt-dev \

@@ -11,8 +11,17 @@ echo '[global]' >> /opt/docker/etc/php/fpm/php-fpm.conf
 if [[ -n "${FPM_PROCESS_MAX+x}" ]]; then
     echo "process.max = ${FPM_PROCESS_MAX}" >> /opt/docker/etc/php/fpm/php-fpm.conf
 fi
+if [[ -n "${FPM_LOG_LEVEL+x}" ]]; then
+    echo "log_level = ${FPM_LOG_LEVEL}" >> /opt/docker/etc/php/fpm/php-fpm.conf
+fi
 echo '' >> /opt/docker/etc/php/fpm/pool.d/application.conf
 echo '; container env settings' >> /opt/docker/etc/php/fpm/pool.d/application.conf
+if [[ -n "${FPM_DISABLE_ACCESS_LOG+x}" ]]; then
+    go-replace --mode=lineinfile --regex \
+    -s '^[\s;]*access.log[\s]*=' -r 'access.log = /dev/null' \
+        --path=/opt/docker/etc/php/fpm/ \
+        --path-pattern='*.conf'
+fi
 if [[ -n "${FPM_PM_MAX_CHILDREN+x}" ]]; then
     echo "pm.max_children = ${FPM_PM_MAX_CHILDREN}" >> /opt/docker/etc/php/fpm/pool.d/application.conf
 fi
